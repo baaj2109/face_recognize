@@ -1,0 +1,8 @@
+
+.DS_Store
+face_recognize.ipynb
+log/
+data/cfp_fp_align_112.txt
+data/face_emore_align_112.txt
+face_recognize_dataset/
+*.sh
