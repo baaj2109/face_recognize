@@ -43,8 +43,8 @@ class ModelTrainer(object):
     def train(self):
         criterion = torch.nn.CrossEntropyLoss()
         optimizer_ft = optim.SGD([
-            {'params': self.model.parameters(), 'weight_decay': self.args.weight_decay},
-            {'params': self.margin.parameters(), 'weight_decay': self.args.weight_decay}], 
+            {'params': self.model.parameters(),'weight_decay': self.args.weight_decay},
+            {'params': self.margin.parameters(),'weight_decay': self.args.weight_decay}], 
             lr = self.args.learning_rate,
             momentum = self.args.momentum,
             nesterov = True)
@@ -53,6 +53,8 @@ class ModelTrainer(object):
                                                     milestones=[6, 8, 10],
                                                     gamma=0.3) 
         total_iters = 0
+        best_acc = 0.0
+        best_iters = 0
         for epoch in range(self.args.epochs):
             # train model
             exp_lr_scheduler.step()
@@ -84,7 +86,7 @@ class ModelTrainer(object):
                         for p in  optimizer_ft.param_groups:
                             lr = p['lr']
                         training_info = f"Epoch {epoch}/{self.args.epochs - 1}, "
-                        training_info += f"Iters: {total_iters:0>6d}, "
+                        training_info += f"Iters: {total_iters:06d}, "
                         training_info += f"loss: {loss.item():.4f}, "
                         training_info += f"train_accuracy: {correct/total:.4f}, "
                         training_info += f"time: {time_cur:.2f}, "
@@ -92,14 +94,13 @@ class ModelTrainer(object):
                         print(training_info)
 
                         with open(self.train_logging_file, "a") as writefile:
-
                             logging_info = f"Epoch {epoch}/{self.args.epochs - 1}, "
-                            logging_info += f"Iters: {total_iters: 0>6d}, "
+                            logging_info += f"Iters: {total_iters: 06d}, "
                             logging_info += f"loss: {loss.item():.4f}, "
                             logging_info += f"train_accuracy: {correct/total:.4f}, "
                             logging_info += f"time: {time_cur:.2f} s/iter, "
                             logging_info += f"learning rate: {lr}"
-                            print(logging_info, file = train_logging_file)
+                            print(logging_info, file = writefile)
 
                 if total_iters % 3000 == 0:
                     torch.save({
@@ -114,31 +115,31 @@ class ModelTrainer(object):
                 # evaluate accuracy
                 if total_iters % 3000 == 0:
                     self.model.eval()
-                    for phase in ['LFW', 'CFP_FP', 'AgeDB30']:                 
-                        featureLs, featureRs = getFeature(model, dataloaders[phase], device, flip = self.args.flip)
-                        ACCs, threshold = evaluation_10_fold(featureLs, featureRs, dataset[phase], method = self.args.measure_method)
-                        
-                        test_info = f"Epoch {epoch}/{self.args.epochs - 1} {phase}"
-                        test_info += f"average acc: {np.mean(ACCs) * 100:.4f} "
-                        test_info += f"average threshold: {np.mean(threshold):.f4}"
-                        print(test_info)
-                        
-                        if best_acc[phase] <= np.mean(ACCs) * 100:
-                            best_acc[phase] = np.mean(ACCs) * 100
-                            best_iters[phase] = total_iters
-
-                        with open(self.test_logging_file, 'a') as writefile:
-                            logging_info = f"Epoch {epoch}/{self.args.epochs - 1}, {phase} "
-                            logging_info += f"average acc: {100 * np.mean(ACCs):.4f} "
-                            logging_info += f"average threshold: {np.mean(threshold):.4f}"
-                            print(logging_info, file = test_logging_file)
+                    featureLs, featureRs = getFeature(
+                        self.model,  
+                        self.validation_loader, 
+                        flip = self.args.flip)
+                    ACCs, threshold = evaluation_10_fold(
+                        featureLs, 
+                        featureRs, 
+                        self.validation_loader.dataset, 
+                        method = self.args.measure_method)
+                    test_info = f"Epoch {epoch}/{self.args.epochs - 1} CFP_FP "
+                    test_info += f"average acc: {np.mean(ACCs) * 100:.4f} "
+                    test_info += f"average threshold: {np.mean(threshold):.4f}"
+                    print(test_info)
+                    if best_acc <= np.mean(ACCs) * 100:
+                        best_acc = np.mean(ACCs) * 100
+                        best_iters = total_iters
+                    with open(self.test_logging_file, 'a') as writefile:
+                        logging_info = f"Epoch {epoch}/{self.args.epochs - 1} CFP_FP "
+                        logging_info += f"average acc: {100 * np.mean(ACCs):.4f} "
+                        logging_info += f"average threshold: {np.mean(threshold):.4f}"
+                        print(logging_info, file = writefile)
                     self.model.train()
 
         time_elapsed = time.time() - start  
-        print(f"""Finally Best Accuracy: {best_acc['LFW']:.4f} in iters: {best_iters['LFW']}
-                               CFP_FP: {best_acc['CFP_FP']:.4f} in iters: {best_iter['CFP_FP']}
-                               AgeDB-30: {best_acc['AgeDB30']:.4f} in iters: {best_iters['AgeDB30']}""")
-
+        print(f"""Finally Best Accuracy CFP_FP: {best_acc:.4f} in iters: {best_iter}""")
         print(f'Training complete in {time_elapsed//60:.0f}m {time_elapsed%60:.0f}s')
 
 

@@ -24,10 +24,10 @@ def main(args):
 
     model = MobileFaceNet(args.embedding_size)
 
-    if args.pretrained_model_path != "./":
+    if args.model_weights_path != "./":
         try: 
-        detect_model.load_state_dict(torch.load(args.model_weights_path, 
-                                                map_location=lambda storage, loc: storage))
+            detect_model.load_state_dict(torch.load(args.model_weights_path, 
+                                                    map_location=lambda storage, loc: storage))
         except Exception as e:
             print(f"failed to load weithts, {e}")
 
