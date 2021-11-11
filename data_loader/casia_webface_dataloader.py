@@ -2,6 +2,7 @@
 import os
 import cv2
 import numpy as np
+import logging
 import torch.utils.data as data
 import torchvision.transforms as transforms
 
@@ -23,7 +24,9 @@ class CASIAWebFace(data.Dataset):
         self.image_list = image_list
         self.label_list = label_list
         self.class_nums = len(np.unique(self.label_list))
-        print("CASIA dataset size: ", len(self.image_list), '/', self.class_nums)
+        logging.info(
+            f"CASIA dataset size: {len(self.image_list)} / {self.class_nums}"  
+        )
 
     def __getitem__(self, index):
         img_path = self.image_list[index]

@@ -30,8 +30,8 @@ class CFPFP(data.Dataset):
             self.flags.append(flag)
 
     def __getitem__(self, index):
-        img_l = self._loader(self.nameLs[index])
-        img_r = self._loader(self.nameRs[index])
+        img_l = self._load_image(self.nameLs[index])
+        img_r = self._load_image(self.nameRs[index])
         imglist = [img_l, cv2.flip(img_l, 1), img_r, cv2.flip(img_r, 1)]
 
         if self.transform is not None:
@@ -46,7 +46,7 @@ class CFPFP(data.Dataset):
     def __len__(self):
         return len(self.nameLs)
 
-    def _loader(self, path):
+    def _load_image(self, path):
         img = cv2.imread(path)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         img = cv2.resize(img, (112, 112))

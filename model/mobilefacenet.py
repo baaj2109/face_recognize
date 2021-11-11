@@ -8,7 +8,12 @@ import math
 from .model_utils import Flatten, l2_norm
 
 class ConvBlock(Module):
-    def __init__(self, in_c, out_c, kernel = (1, 1), stride = (1, 1), padding = (0, 0), groups = 1):
+    def __init__(self, 
+                 in_c, out_c, 
+                 kernel = (1, 1), 
+                 stride = (1, 1), 
+                 padding = (0, 0), 
+                 groups = 1):
         super(ConvBlock, self).__init__()
         self.conv = Conv2d(in_c,
                            out_channels = out_c, 
@@ -26,7 +31,12 @@ class ConvBlock(Module):
         return x
 
 class Linear_block(Module):
-    def __init__(self, in_c, out_c, kernel = (1, 1), stride = (1, 1), padding = (0, 0), groups = 1):
+    def __init__(self, 
+                 in_c, out_c, 
+                 kernel = (1, 1), 
+                 stride = (1, 1), 
+                 padding = (0, 0), 
+                 groups = 1):
         super(Linear_block, self).__init__()
         self.conv = Conv2d(in_c,
                            out_channels = out_c, 
@@ -42,7 +52,13 @@ class Linear_block(Module):
         return x
 
 class DepthWise(Module):
-    def __init__(self, in_c, out_c, residual = False, kernel = (3, 3), stride = (2, 2), padding = (1, 1), groups = 1):
+    def __init__(self, 
+                 in_c, out_c, 
+                 residual = False, 
+                 kernel = (3, 3), 
+                 stride = (2, 2), 
+                 padding = (1, 1), 
+                 groups = 1):
         super(DepthWise, self).__init__()
         self.conv = ConvBlock(in_c, 
                               out_c = groups, 
@@ -50,17 +66,18 @@ class DepthWise(Module):
                               padding = (0, 0), 
                               stride = (1, 1))
         self.conv_dw = ConvBlock(groups, 
-                                  groups, 
-                                  groups = groups, 
-                                  kernel = kernel, 
-                                  padding = padding, 
-                                  stride = stride)
+                                 groups, 
+                                 groups = groups, 
+                                 kernel = kernel, 
+                                 padding = padding, 
+                                 stride = stride)
         self.project = Linear_block(groups, 
                                     out_c, 
                                     kernel = (1, 1), 
                                     padding = (0, 0), 
                                     stride = (1, 1))
         self.residual = residual
+
     def forward(self, x):
         if self.residual:
             short_cut = x
@@ -74,12 +91,16 @@ class DepthWise(Module):
         return output
 
 class Residual(Module):
-    def __init__(self, c, num_block, groups, kernel = (3, 3), stride = (1, 1), padding = (1, 1)):
+    def __init__(self, 
+                 c, num_block, 
+                 groups, 
+                 kernel = (3, 3), 
+                 stride = (1, 1), 
+                 padding = (1, 1)):
         super(Residual, self).__init__()
         modules = []
         for _ in range(num_block):
-            modules.append(DepthWise(c,
-                                     c, 
+            modules.append(DepthWise(c, c, 
                                      residual = True, 
                                      kernel = kernel, 
                                      padding = padding, 

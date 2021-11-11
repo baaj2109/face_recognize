@@ -7,6 +7,7 @@ import torch.utils.data as data
 from model import MobileFaceNet, l2_norm
 from data_loader import CFPFP
 import argparse
+import logging
 
 def getAccuracy(scores, flags, threshold, method):
     if method == 'l2_distance':
@@ -53,10 +54,7 @@ def getFeature(net, dataloader,flip = True):
             featureRs = featureR
         else:
             featureRs = torch.cat((featureRs, featureR), 0)
-
     return featureLs, featureRs
-
-
 
 def evaluation_10_fold(featureL, featureR, dataset, method = 'l2_distance'):
     ### Evaluate the accuracy ###
@@ -68,7 +66,6 @@ def evaluation_10_fold(featureL, featureR, dataset, method = 'l2_distance'):
     featureRs = featureR.numpy()
 
     for i in range(10):
-        
         valFold = fold != i
         testFold = fold == i
         flags = np.squeeze(flags)
@@ -89,8 +86,6 @@ def evaluation_10_fold(featureL, featureR, dataset, method = 'l2_distance'):
         ACCs[i] = getAccuracy(scores[testFold[0]], flags[testFold[0]], threshold[i], method)
         
     return ACCs, threshold
-
-
 
 
 if __name__ == "__main__":

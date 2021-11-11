@@ -3,7 +3,6 @@ import argparse
 
 parser = argparse.ArgumentParser(description='training mobilefacenet with casia dataset')
 
-
 """
 Data
 """
