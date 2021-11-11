@@ -19,9 +19,6 @@
 ├───args
 │   └───args
 └───log
-    ├───datetime_log
-    |───final_reports
-    └───project_reports
-
+    └───datetime_log
 ```
 
