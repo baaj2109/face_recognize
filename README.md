@@ -3,15 +3,18 @@
 ## train
 1. create training dataset file list
 ```
-python casia_webface.py --image-path ./CASIA-WebFace --output-file ./face_emore_align_112.txt
+python casia_webface.py --image-path ./CASIA-WebFace \
+                        --output-file ./face_emore_align_112.txt
 ```
 2. create validation dataset file list
 ```
-python cfp_fp.py --folder-path ./CASIA-cfp-dataset --output-file ./cfp_fp_align_112.txt
+python cfp_fp.py --folder-path ./CASIA-cfp-dataset \
+                 --output-file ./cfp_fp_align_112.txt
 ```
 3. training model
 ```
-python main.py --file-list ./data/face_emore_align_112.txt  --validation-file-list ./data/cfp_fp_align_112.txt 
+python main.py --file-list ./data/face_emore_align_112.txt \
+               --validation-file-list ./data/cfp_fp_align_112.txt 
 ```
 
 ## folder structure
