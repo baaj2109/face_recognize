@@ -38,8 +38,8 @@ class ModelTrainer(object):
             nesterov = True)
 
         exp_lr_scheduler = lr_scheduler.MultiStepLR(optimizer_ft,
-                                                    milestones=[6, 8, 10],
-                                                    gamma=0.3) 
+                                                    milestones = [6, 8, 10],
+                                                    gamma = 0.3) 
         total_iters = 0
         best_acc = 0.0
         best_iters = 0

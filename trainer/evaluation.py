@@ -82,8 +82,16 @@ def evaluation_10_fold(featureL, featureR, dataset, method = 'l2_distance'):
         elif method == 'cos_distance':
             scores = np.sum(np.multiply(featureLs, featureRs), 1) # cos distance
         
-        threshold[i] = getThreshold(scores[valFold[0]], flags[valFold[0]], 10000, method)
-        ACCs[i] = getAccuracy(scores[testFold[0]], flags[testFold[0]], threshold[i], method)
+        threshold[i] = getThreshold(
+            scores[valFold[0]], 
+            flags[valFold[0]], 
+            10000, 
+            method)
+        ACCs[i] = getAccuracy(
+            scores[testFold[0]], 
+            flags[testFold[0]], 
+            threshold[i], 
+            method)
         
     return ACCs, threshold
 
@@ -116,7 +124,7 @@ if __name__ == "__main__":
 
     try: 
         detect_model.load_state_dict(torch.load(args.model_weights_path, 
-                                                map_location=lambda storage, loc: storage))
+                                                map_location = lambda storage, loc: storage))
     except Exception as e:
         print(f"failed to load weithts, {e}")
 
@@ -126,7 +134,8 @@ if __name__ == "__main__":
     ### load data ###
     transform = transforms.Compose([
             transforms.ToTensor(),  
-            transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))])
+            transforms.Normalize(mean = (0.5, 0.5, 0.5),
+                                 std = (0.5, 0.5, 0.5))])
 
     dataset = CFPFP(args.validation_list, transform = transform)
         
@@ -144,7 +153,7 @@ if __name__ == "__main__":
     ACCs, threshold = evaluation_10_fold(featureLs, featureRs, dataset, method = args.method)
     
     for i in range(len(ACCs)):
-        print('{} accuracy: {:.2f} threshold: {:.4f}'.format(i+1, ACCs[i] * 100, threshold[i]))
+        print('{} accuracy: {:.2f} threshold: {:.4f}'.format(i + 1, ACCs[i] * 100, threshold[i]))
     print('--------')
     print('Average Acc:{:.4f} Average Threshold:{:.4f}'.format(np.mean(ACCs) * 100, np.mean(threshold)))
 

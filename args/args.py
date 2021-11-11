@@ -45,7 +45,6 @@ parser.add_argument('--model-weights-path',
 """
 Training
 """
-
 parser.add_argument("--num-workers", 
                     type = int,
                     default = 0,
@@ -86,11 +85,4 @@ parser.add_argument('--measure-method',
                     default = 'l2_distance',
                     choices = ["l2_distance", "cos_distance"],
                     help = "measure method support two method `l2_distance` and `cos_distance`")
-
-
-
-
-
-
-
 

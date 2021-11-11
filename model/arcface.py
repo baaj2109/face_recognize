@@ -34,13 +34,13 @@ class ArcFace(Module):
         # weights norm
         
         nB = len(embbedings)
-        kernel_norm = l2_norm(self.kernel,axis=0) # normalize for each column
+        kernel_norm = l2_norm(self.kernel, axis = 0) # normalize for each column
         
         # cos(theta+m)        
-        cos_theta = torch.mm(embbedings,kernel_norm)
+        cos_theta = torch.mm(embbedings, kernel_norm)
 #         output = torch.mm(embbedings,kernel_norm)
         
-        cos_theta = cos_theta.clamp(-1,1) # for numerical stability
+        cos_theta = cos_theta.clamp(-1, 1) # for numerical stability
         cos_theta_2 = torch.pow(cos_theta, 2)
         sin_theta_2 = 1 - cos_theta_2
         sin_theta = torch.sqrt(sin_theta_2)
@@ -58,7 +58,7 @@ class ArcFace(Module):
 
         # a little bit hacky way to prevent in_place operation on cos_theta
         output = cos_theta * 1.0
-        idx_ = torch.arange(0, nB, dtype=torch.long)
+        idx_ = torch.arange(0, nB, dtype = torch.long)
         output[idx_, label] = cos_theta_m[idx_, label]
 
         # scale up in order to make softmax work, first introduced in normface
@@ -69,12 +69,8 @@ class ArcFace(Module):
 if __name__ == "__main__":
 
     arcface = ArcFace()
-    tensor_input = torch.Tensor((1,512))
+    tensor_input = torch.Tensor((1, 512))
     label = torch.Tensor(1)
     output = arcface(tensor_input, label)
     print(output.shape)
-
-
-
-
 

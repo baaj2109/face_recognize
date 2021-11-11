@@ -43,11 +43,11 @@ def process(args):
             print(tmp, file = writefile)
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='create cfp fp pair file list')
+    parser = argparse.ArgumentParser(description= ' create cfp fp pair file list')
 
     parser.add_argument("--folder-path", 
-                        type=str,
-                        help='CFP_FP dataset path')
+                        type = str,
+                        help = 'CFP_FP dataset path')
 
     parser.add_argument("--output-file",
                         type = str,

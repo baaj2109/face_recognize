@@ -204,5 +204,3 @@ if __name__ == "__main__":
     x = net(tensor_input)
     print(x.shape)
 
-
-

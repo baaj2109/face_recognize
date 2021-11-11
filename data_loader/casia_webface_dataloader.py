@@ -67,18 +67,3 @@ if __name__ == "__main__":
         print(f"label shape: {data[1].shape}")
         break
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
