@@ -1,5 +1,7 @@
 import os
+import sys
 import logging
+import datetime
 import torchvision.transforms as transforms
 import torch.utils.data as data
 from model import MobileFaceNet, ArcFace
@@ -18,18 +20,18 @@ def create_log_workspace(path):
         os.mkdir(models_dir)
     return log_dir, models_dir
 
-def write_args(path):
+def write_args(args, path):
     with open(os.path.join(path, "args.txt"), "w") as writefile:
-        for k, v in sorted(self.args.__dict__.items()):
+        for k, v in sorted(args.__dict__.items()):
             print(f"{k}: {v}", file = writefile)
 
 
 def main(args):
     log_dir, models_dir = create_log_workspace(args.output_path)
-    write_args(log_dir)
+    write_args(args, log_dir)
 
     logging.basicConfig(
-        stream = sys.stdout, 
+        # stream = sys.stdout, 
         level = logging.INFO,
         filename = os.path.join(log_dir, "training_log.log"), 
         filemode = 'a',
